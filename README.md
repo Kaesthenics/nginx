@@ -30,7 +30,7 @@ systemctl enable|disable nginx
 systemctl status nginx
 ```
 
-### Connaitre le statut nginx
+### Vérifier le config nginx
 ```
-systemctl status nginx
+sudo nginx -t
 ```
