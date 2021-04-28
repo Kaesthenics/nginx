@@ -34,3 +34,4 @@ systemctl status nginx
 ```
 sudo nginx -t
 ```
+
