@@ -19,6 +19,7 @@ location ^~ /uri {
 
 ## 3 Regex match
 ### Toutes les urls qui commencent par test et on un chiffre de 0 à 9 par exemple.
+~pour regex et * pour desactiver la casse
 ```
 location ~* /uri[0-9] {
     return 200 'Ma réponse';

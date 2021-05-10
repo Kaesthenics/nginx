@@ -14,3 +14,6 @@ A condition que /foo existe
 ````
 rewrite /rewrite/\w+ /foo
 ```
+
+
+La réécriture est plus couteuse car il y a le context server est réévalué

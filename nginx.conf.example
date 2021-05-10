@@ -1,0 +1,86 @@
+# Changement du fichier pid
+pid /var/run/new_nginx.pid;
+
+# Autant de travailleur que de CPU
+worker_processes 2;
+
+
+# events doit toujours être présent même si vide.
+events {
+	worker_connections 1024;
+}
+# Nginx doit etre executé en www-data car le process php est en www-data
+user www-data;
+
+http {
+	# Pour inclures tous les types dans les en-têtes des requêtes (par défault: text/plain seulement)
+	include mime.types;
+
+	# Buffer size for POST submissions
+  client_body_buffer_size 10K;
+  # Taille maximum du body accepté -> Error 413
+  client_max_body_size 8m; 
+
+  # Buffer size for Headers
+  client_header_buffer_size 1k;
+
+  # Max time to receive client headers/body
+  client_body_timeout 12; // 12s 12m 12h 12d
+  client_header_timeout 12;
+
+  # Max time to keep a connection open for
+  keepalive_timeout 15;
+
+  # Max time for the client accept/receive a response
+  send_timeout 10;
+
+  # Skip buffering for static files
+  sendfile on;
+
+  # Optimise sendfile packets
+  tcp_nopush on;
+
+	
+	server {
+		# Le port: 80 -> http ; 443 -> https
+		listen 80;
+		# L'adresse à saisir pour accéder au serveur
+		server_name 82.165.111.221;
+
+		# Réécriture d'url, on ajoute last pour éviter une réévaluation/rewrite dans l'url;
+		rewrite ^/rewrite /test last; 
+
+		root /sites/demo;
+		# On peut rajouter = /test pour adresse exact
+		# ~ /test[0-9] pour les regex par exemple 
+		# * pour enlever le case sensitive
+
+		location /uri {
+			access_log /var/log/nginx/uri.access.log;
+			return 200 'Welcome to uri';
+		}
+
+		location ~* /test {
+			return 201 'test';
+		}
+
+		index index.php index.html;
+
+		location / {
+			try_files $uri $uri/ =404;
+		}
+
+		location ~\.php$ {
+			# /etc/nginx/fastcgi.conf
+			include fastcgi.conf;
+
+			fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+
+		}
+
+
+		location /logo {
+			return 307 /thumb.png;
+		}
+	}
+}
