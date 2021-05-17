@@ -9,3 +9,10 @@ Et ajouter cette ligne
 
 # Enable DH Params
 ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+
+server {
+    # More options security (éviter le clickjacking)
+    add_header X-Frame-Options "SAMEORIGIN";    
+    add_header X-XSS-Protection "1; mode=block";
+}
